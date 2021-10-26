@@ -173,6 +173,7 @@ static double compute_output_torque() {
   // do not touch the ground)
   if (fabs(instance->car->max_acceleration) > ACCELERATION_THRESHOLD)
     output_torque *= (ACCELERATION_THRESHOLD / fabs(instance->car->max_acceleration));
+
   return output_torque;
 }
 

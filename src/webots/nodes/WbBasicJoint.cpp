@@ -39,13 +39,9 @@ void WbBasicJoint::init() {
   mIsEndPointPositionChangedByJoint = false;
 
   mTransform = NULL;
-  mTransformSuspension = NULL;
   mRenderable = NULL;
-  mRenderableSuspension = NULL;
   mMesh = NULL;
-  mMeshSuspension = NULL;
   mMaterial = NULL;
-  mMaterialSuspension = NULL;
 
   mParameters = findSFNode("jointParameters");
   mEndPoint = findSFNode("endPoint");
@@ -79,13 +75,9 @@ WbBasicJoint::~WbBasicJoint() {
 
   if (areWrenObjectsInitialized()) {
     wr_static_mesh_delete(mMesh);
-    wr_static_mesh_delete(mMeshSuspension);
     wr_material_delete(mMaterial);
-    wr_material_delete(mMaterialSuspension);
     wr_node_delete(WR_NODE(mRenderable));
-    wr_node_delete(WR_NODE(mRenderableSuspension));
     wr_node_delete(WR_NODE(mTransform));
-    wr_node_delete(WR_NODE(mTransformSuspension));
   }
 }
 
@@ -356,11 +348,6 @@ void WbBasicJoint::createWrenObjects() {
   wr_phong_material_set_color(mMaterial, color);
   wr_material_set_default_program(mMaterial, WbWrenShaders::lineSetShader());
 
-  const float colorSuspension[3] = {1.0f, 0.0f, 0.0f};
-  mMaterialSuspension = wr_phong_material_new();
-  wr_phong_material_set_color(mMaterialSuspension, colorSuspension);
-  wr_material_set_default_program(mMaterialSuspension, WbWrenShaders::lineSetShader());
-
   mRenderable = wr_renderable_new();
   wr_renderable_set_cast_shadows(mRenderable, false);
   wr_renderable_set_receive_shadows(mRenderable, false);
@@ -368,22 +355,10 @@ void WbBasicJoint::createWrenObjects() {
   wr_renderable_set_visibility_flags(mRenderable, WbWrenRenderingContext::VF_JOINT_AXES);
   wr_renderable_set_drawing_mode(mRenderable, WR_RENDERABLE_DRAWING_MODE_LINES);
 
-  mRenderableSuspension = wr_renderable_new();
-  wr_renderable_set_cast_shadows(mRenderableSuspension, false);
-  wr_renderable_set_receive_shadows(mRenderableSuspension, false);
-  wr_renderable_set_material(mRenderableSuspension, mMaterialSuspension, NULL);
-  wr_renderable_set_visibility_flags(mRenderableSuspension, WbWrenRenderingContext::VF_JOINT_AXES);
-  wr_renderable_set_drawing_mode(mRenderableSuspension, WR_RENDERABLE_DRAWING_MODE_LINES);
-
   mTransform = wr_transform_new();
   wr_node_set_visible(WR_NODE(mTransform), false);
   wr_transform_attach_child(mTransform, WR_NODE(mRenderable));
   wr_transform_attach_child(wrenNode(), WR_NODE(mTransform));
-
-  mTransformSuspension = wr_transform_new();
-  wr_node_set_visible(WR_NODE(mTransformSuspension), false);
-  wr_transform_attach_child(mTransformSuspension, WR_NODE(mRenderableSuspension));
-  wr_transform_attach_child(wrenNode(), WR_NODE(mTransformSuspension));
 
   connect(WbWrenRenderingContext::instance(), &WbWrenRenderingContext::optionalRenderingChanged, this,
           &WbBasicJoint::updateOptionalRendering);
@@ -407,11 +382,8 @@ void WbBasicJoint::updateOptionalRendering(int option) {
     if (WbWrenRenderingContext::instance()->isOptionalRenderingEnabled(option)) {
       updateJointAxisRepresentation();
       wr_node_set_visible(WR_NODE(mTransform), true);
-      wr_node_set_visible(WR_NODE(mTransformSuspension), true);
-    } else {
+    } else
       wr_node_set_visible(WR_NODE(mTransform), false);
-      wr_node_set_visible(WR_NODE(mTransformSuspension), false);
-    }
   }
 }
 /////////////////

@@ -41,7 +41,6 @@ public:
   WbVector3 anchor() const override;
   // return the axis of the joint with coordinates relative to the parent Solid; defaults to unit x-axis
   WbVector3 axis() const override;
-  virtual WbVector3 suspensionAxis() const;
 
   void updateEndPointZeroTranslationAndRotation() override;
 
@@ -62,7 +61,6 @@ protected slots:
   void updateStopErp();
   void updateStopCfm();
   virtual void updateAnchor();
-  void updateJointAxisRepresentation() override;
 
 private slots:
   void updateSuspension();
