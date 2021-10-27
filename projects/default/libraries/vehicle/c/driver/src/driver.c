@@ -356,8 +356,7 @@ static void update_torque() {
     wb_motor_set_torque(instance->car->wheels[1], front_left_torque);
     wb_motor_set_torque(instance->car->wheels[2], rear_right_torque);
     wb_motor_set_torque(instance->car->wheels[3], rear_left_torque);
-    // fprintf(stdout, "4x4 RF %f RR %f RC %f output %f\n%f %f\n%f %f\n", ratio_front, ratio_rear, ratio_central, torque,
-    //        front_left_torque, front_right_torque, rear_left_torque, rear_right_torque);
+    // fprintf(stdout, "sent %f %f %f %f\n", front_left_torque, front_right_torque, rear_left_torque, rear_right_torque);
   }
 }
 
@@ -721,6 +720,8 @@ void wbu_driver_set_throttle(double throttle) {
 
   instance->throttle = throttle;
   instance->control_mode = TORQUE;
+
+  update_torque();
 }
 
 double wbu_driver_get_throttle() {
